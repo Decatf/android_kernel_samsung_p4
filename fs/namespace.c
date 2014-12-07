@@ -2274,16 +2274,6 @@ int copy_mount_string(const void __user *data, char **where)
 	return 0;
 }
 
-#ifdef CONFIG_P4_RDONLY_EXTRA
-static const char* blacklist_dev[] = {
-	"mmcblk0p10",
-	"/dev/block/mmcblk0p10",
-	"/dev/block/platform/sdhci-tegra.3/mmcblk0p10",
-	"/dev/block/platform/sdhci-tegra.3/by-name/HD",
-	"/dev/block/platform/sdhci-tegra.3/by-num/p10",
-};
-#endif
-
 /*
  * Flags is a 32-bit value that allows up to 31 non-fs dependent flags to
  * be given to the mount() call (ie: read-only, no-dev, no-suid etc).
@@ -2304,9 +2294,6 @@ long do_mount(const char *dev_name, const char *dir_name,
 	struct path path;
 	int retval = 0;
 	int mnt_flags = 0;
-#ifdef CONFIG_P4_RDONLY_EXTRA
-	unsigned int i = 0;
-#endif
 
 	/* Discard magic */
 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
@@ -2353,17 +2340,6 @@ long do_mount(const char *dev_name, const char *dir_name,
 	flags &= ~(MS_NOSUID | MS_NOEXEC | MS_NODEV | MS_ACTIVE | MS_BORN |
 		   MS_NOATIME | MS_NODIRATIME | MS_RELATIME| MS_KERNMOUNT |
 		   MS_STRICTATIME);
-
-#ifdef CONFIG_P4_RDONLY_EXTRA
-	// printk(KERN_WARNING "%s: Mount check: %s.\n", __func__, dev_name);
-	for (i = 0; i < sizeof(blacklist_dev) / sizeof(blacklist_dev[0]); i++){
-		if (strstr(dev_name, blacklist_dev[i]) != NULL) {
-			printk(KERN_WARNING "Warning: extra partition can only be mounted read-only.\n");
-			mnt_flags |= MNT_READONLY;
-			break;
-		}
-	}
-#endif
 
 	if (flags & MS_REMOUNT)
 		retval = do_remount(&path, flags & ~MS_REMOUNT, mnt_flags,

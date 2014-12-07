@@ -283,15 +283,4 @@ endif
 source "fs/nls/Kconfig"
 source "fs/dlm/Kconfig"
 
-config P4_RDONLY_EXTRA
-	bool "The extra partition is always mounted as read-only."
-	default n
-	help
-	  Say Y here to force the "extra" partition to be mounted read-only.
-
-	  On the Samsung Galaxy Tab 10.1 the recovery partition has limited space.
-	  The extra partition can be used to store data that will not fit on the
-	  recovery partition. Always mount this partition as read-only to prevent
-	  deleting or overwriting the recovery data.
-
 endmenu
