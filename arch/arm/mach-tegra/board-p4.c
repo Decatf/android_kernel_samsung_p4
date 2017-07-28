@@ -1976,24 +1976,6 @@ static void p4_check_hwrev(void)
 	pr_info("%s: system_rev = %d (gpio value = 0x%02x)\n", __func__, system_rev, value);
 }
 
-static void p3_power_off(void)
-{
-	int ret;
-	u32 value;
-
-	ret = tps6586x_power_off();
-	if (ret)
-		pr_err("p3: failed to power off\n");
-
-	while (1)
-		;
-}
-
-static void __init p3_power_off_init(void)
-{
-	pm_power_off = p3_power_off;
-}
-
 #ifdef CONFIG_KERNEL_DEBUG_SEC
 /* Debug level control */
 static ssize_t show_sec_debug_level(struct device *dev,
@@ -2169,7 +2151,6 @@ static void __init tegra_p3_init(void)
 	p3_gps_init();
 	p3_panel_init();
 	p3_sensors_init();
-	p3_power_off_init();
 	p3_emc_init();
 	tegra_release_bootloader_fb();
 
